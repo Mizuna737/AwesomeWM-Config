@@ -10,6 +10,7 @@ local awful     = require("awful")
 local wibox     = require("wibox")
 local beautiful = require("beautiful")
 local lain      = require("lain")
+local dpi = require("beautiful.xresources").apply_dpi
 
 local bar = {}
 
@@ -101,7 +102,7 @@ local volume_bar = wibox.widget {
     value            = 50,
     forced_height    = 10,
     forced_width     = 50,
-    color            = beautiful.bg_normal,
+    color            = beautiful.bg_focus,
     background_color = beautiful.bg_normal,
     widget           = wibox.widget.progressbar
 }
@@ -216,7 +217,8 @@ local function updateVolumeWidget()
         shrink_timer:stop()
     end
 
-    volume_bar.color = beautiful.bg_normal -- highlight color
+    volume_bar.background_color = beautiful.bg_normal -- unfilled color
+    volume_bar.color = beautiful.border_focus -- filled color
     animate_widget_size(enlarged_width, enlarged_height)
 
     awful.spawn.easy_async_with_shell("pactl get-sink-volume @DEFAULT_SINK@", function(stdout)
@@ -228,7 +230,8 @@ local function updateVolumeWidget()
     end)
 
     shrink_timer = gears.timer.start_new(1, function()
-        volume_bar.color = beautiful.bg_normal
+        volume_bar.background_color = beautiful.bg_normal -- unfilled color
+        volume_bar.color = beautiful.border_normal -- filled color
         animate_widget_size(normal_width, normal_height)
         new_text.font = "Terminus 10"
         old_text.font = "Terminus 10"
@@ -377,13 +380,17 @@ function bar.setupWibar()
         }
 
         -- Create a wibox (top bar)
+        local side_margin = dpi(24)
         s.mywibox = awful.wibar({
             position = "top",
             screen   = s,
-            height   = 20, -- or dpi(16) if you want
+            x        = side_margin,
+            width    = s.geometry.width - 2 * side_margin,
+            height   = dpi(24),
             bg       = beautiful.bg_normal,
-            fg       = beautiful.fg_normal
+            fg       = beautiful.fg_normal,
         })
+        
 
         -- We can place the CPU, Mem, Temp, Net, Volume, DateTime, FocusedClass, etc. on the "right" side
         -- using arrow() calls in between for style transitions.
@@ -394,7 +401,8 @@ function bar.setupWibar()
 
             { -- Left widgets
                 layout = wibox.layout.fixed.horizontal,
-                s.mytaglist,
+                spr,
+                wibox.container.margin(s.mytaglist, dpi(10), 0, 0, 0),  -- Adds 10dpi of left margin
                 s.mypromptbox,
                 spr,
             },

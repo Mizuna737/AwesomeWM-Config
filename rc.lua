@@ -198,7 +198,7 @@ client.connect_signal("unfocus", function(c)
     end
 end)
 
-beautiful.useless_gap = 10
+beautiful.useless_gap = 6
 
 --------------------------------
 -- Finish up
