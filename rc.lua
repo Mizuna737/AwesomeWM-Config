@@ -84,6 +84,25 @@ bar.setupWibar()
 
 awful.util.primaryTagnames = { "Entertainment", "Code", "Work", "Obsidian", "Misc" }
 
+-- Layout Mapping Table
+layoutMapping = {
+    { func = awful.layout.suit.tile,           name = "tile" },
+    { func = awful.layout.suit.tile.left,      name = "tileleft" },
+    { func = awful.layout.suit.tile.bottom,    name = "tilebottom" },
+    { func = awful.layout.suit.tile.top,       name = "tiletop" },
+    { func = awful.layout.suit.fair,           name = "fair" },
+    { func = awful.layout.suit.fair.horizontal, name = "fairhorizontal" },
+    { func = awful.layout.suit.spiral,         name = "spiral" },
+    { func = awful.layout.suit.dwindle,        name = "dwindle" },
+    { func = awful.layout.suit.max,            name = "max" },
+    { func = awful.layout.suit.fullscreen,     name = "fullscreen" },
+    { func = awful.layout.suit.magnifier,      name = "magnifier" },
+    { func = awful.layout.suit.floating,       name = "floating" },
+    { func = lain.layout.centerwork,           name = "centerwork" },
+    { func = lain.layout.termfair,             name = "termfair" },
+    { func = lain.layout.cascade.tile,         name = "cascade_tile" },
+    { func = lain.layout.cascade,              name = "cascade" },
+}
 -- Basic layout definitions for each tag
 awful.layout.primaryLayouts = {
     lain.layout.centerwork, -- Entertainment
@@ -98,6 +117,12 @@ local primary_tags = awful.tag(
     screen.primary, 
     awful.layout.primaryLayouts
 )
+
+--------------------------------
+-- Custom layout settings
+--------------------------------
+
+primary_tags[1].master_width_factor = 0.694
 
 --------------------------------
 -- Load Our Custom Logic & Modules
@@ -133,6 +158,16 @@ local clientkeys = gears_table_join(
     -- e.g. tartarusKeys.clientkeys, scimitarKeys.clientkeys, etc., if you define them
 )
 
+local clientbuttons = awful.util.table.join(
+    -- Move window on Meta + Left Click
+    awful.button({ "Mod4" }, 1, awful.mouse.client.move),
+
+    -- Resize window on Meta + Right Click
+    awful.button({ "Mod4" }, 3, awful.mouse.client.resize)
+)
+
+
+
 root.keys(globalkeys)
 
 --------------------------------
@@ -148,6 +183,7 @@ awful.rules.rules = {
             focus        = awful.client.focus.filter,
             raise        = true,
             keys         = clientkeys,
+            buttons      = clientbuttons,
             screen       = awful.screen.preferred,
             placement    = awful.placement.no_overlap + awful.placement.no_offscreen,
             size_hints_honor = false

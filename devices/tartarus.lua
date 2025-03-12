@@ -17,7 +17,7 @@ local altkey = "Mod1"
 local shft   = "Shift"
 
 local tartarus = {}
-
+ 
 --------------------------------
 -- Helper function for brevity
 --------------------------------
@@ -366,11 +366,16 @@ tartarus.globalkeys = gears.table.join(
 
   -- Key space
   tk({modkey, ctrl}, "space",
-    function() naughty.notify({ title="T space", text="tap pressed" }) end,
-    "Space tap => notify"),
+    function() myFuncs.saveWorkspaceConfiguration() end,
+    "R hold => show cheatsheet"),
   tk({modkey, ctrl, altkey}, "space",
-    function() naughty.notify({ title="T space", text="tap+hold pressed" }) end,
-    "Space hold => notify"),
+    function() 
+      local function loadCodeWorkspace()
+        myFuncs.loadWorkspaceConfiguration("Code")
+      end
+      gears.timer.delayed_call(loadCodeWorkspace)
+    end,
+    "R hold => show cheatsheet"),
   tk({modkey, ctrl, shft}, "space",
     function() naughty.notify({ title="T space", text="mod tap pressed" }) end,
     "Space mod tap => notify"),

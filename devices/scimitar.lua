@@ -3,73 +3,123 @@
 -- We'll call them XF86Tools1..XF86Tools12 in keyd. 
 -- "Mouse-L2" might be Control on your keyboard to create a second layer.
 
-local gears = require("gears")
-local awful = require("awful")
+local gears   = require("gears")
+local awful   = require("awful")
+local naughty = require("naughty")
 local myFuncs = require("functions")
+local stack   = require("stack")
+local defaultApps = require("defaultApps")
+-- Modifiers:
+local modkey = "Mod4"  -- Super
+local ctrl   = "Control"
+local altkey = "Mod1"
+local shft   = "Shift"
+
+
+naughty.notify({ title = "Scimitar Keys", text = "scimitar.lua loaded" })
 
 local scimitar = {}
-local l2 = "Control"  -- "Mouse-L2"
+
+--------------------------------
+-- Helper function for brevity
+--------------------------------
+local function sk(mods, key, func, desc)
+    return awful.key(mods, key, func, {description = desc, group = "scimitar"})
+end
 
 scimitar.globalkeys = gears.table.join(
-    -- Normal mode
-    awful.key({}, "XF86Tools1", function()
-        awful.spawn("flameshot gui")
-    end, {description = "Screenshot", group = "scimitar"}),
+    -- Key F1
+    sk({modkey, ctrl}, "F1",
+       function() myFuncs.screenshot() end,
+       "S1 tap => screenshot gui"),
+    sk({modkey, ctrl, shft}, "F1",
+       function() myFuncs.screenshot(1) end,
+       "S1 mod => full screen screenshot"),
 
-    awful.key({}, "XF86Tools2", function()
-        awful.spawn("dunstctl set-paused toggle")
-    end, {description = "Toggle notifications", group = "scimitar"}),
+    -- Key F2
+    sk({modkey, ctrl}, "F2",
+       function() awful.spawn(defaultApps.browser) end,
+       "S2 tap => open default browser"),
+    sk({modkey, ctrl, shft}, "F2",
+       function() awful.spawn("google-chrome") end,
+       "S2 mod => open chrome"),
 
-    awful.key({}, "XF86Tools3", function()
-        awful.spawn("gedit")
-    end, {description = "Open quick notes", group = "scimitar"}),
+    -- Key F3
+    sk({modkey, ctrl}, "F3",
+       function() awful.spawn(defaultApps.terminal) end,
+       "S3 tap => open terminal"),
+    sk({modkey, ctrl, shft}, "F3",
+       function() awful.spawn(defaultApps.terminal .. " -e htop") end,
+       "S3 mod => terminal with htop"),
 
-    awful.key({}, "XF86Tools4", function()
-        awful.spawn("xdotool key super+d")
-    end, {description = "Show desktop", group = "scimitar"}),
+    -- Key F4
+    sk({modkey, ctrl}, "F4",
+       function() myFuncs.openLauncher() end,
+       "S4 tap => open launcher"),
+    sk({modkey, ctrl, shft}, "F4",
+       function() naughty.notify({ text = "S4 mod pressed" }) end,
+       "S4 mod => notify"),
 
-    -- Button 5 might be your "tap for primary window, hold for drag" in hardware, so no direct binding
+    -- Key F5 (single layer only)
+    sk({modkey, ctrl}, "F5",
+       function() myFuncs.promoteFocusedWindow() end,
+       "S5 tap => promote focused window"),
 
-    awful.key({}, "XF86Tools6", function()
-        myFuncs.openSystemMonitor()
-    end, {description = "Open system monitor", group = "scimitar"}),
+    -- Key F6
+    sk({modkey, ctrl}, "F6",
+       function() awful.spawn(defaultApps.filemgr) end,
+       "S6 tap => open file manager"),
+    sk({modkey, ctrl, shft}, "F6",
+       function() naughty.notify({ text = "S6 mod pressed" }) end,
+       "S6 mod => notify"),
 
-    awful.key({}, "XF86Tools7", function()
-        awful.spawn("copyq toggle")
-    end, {description = "Toggle clipboard manager", group = "scimitar"}),
+    -- Key F7
+    sk({modkey, ctrl}, "F7",
+       function() awful.spawn(defaultApps.editor) end,
+       "S7 tap => open editor"),
+    sk({modkey, ctrl, shft}, "F7",
+       function() naughty.notify({ text = "S7 mod pressed" }) end,
+       "S7 mod => notify"),
 
-    awful.key({}, "XF86Tools8", function()
-        awful.spawn("alacritty -e btop")
-    end, {description = "Open dashboard", group = "scimitar"}),
+    -- Key F8
+    sk({modkey, ctrl}, "F8",
+       function() myFuncs.toggleFloating() end,
+       "S8 tap => toggle floating"),
+    sk({modkey, ctrl, shft}, "F8",
+       function() naughty.notify({ text = "S8 mod pressed" }) end,
+       "S8 mod => notify"),
 
-    awful.key({}, "XF86Tools9", function()
-        awful.spawn("spotify")
-    end, {description = "Open music player", group = "scimitar"}),
+    -- Key F9
+    sk({modkey, ctrl}, "F9",
+       function() myFuncs.cycleLayouts() end,
+       "S9 tap => cycle layouts"),
+    sk({modkey, ctrl, shft}, "F9",
+       function() naughty.notify({ text = "S9 mod pressed" }) end,
+       "S9 mod => notify"),
 
-    awful.key({}, "XF86Tools10", function()
-        awful.spawn("rofi -show p -modi p:rofi-power-menu")
-    end, {description = "Open power menu", group = "scimitar"}),
+    -- Key F10
+    sk({modkey, ctrl}, "F10",
+       function() awful.spawn(defaultApps.music) end,
+       "S10 tap => open music player"),
+    sk({modkey, ctrl, shft}, "F10",
+       function() naughty.notify({ text = "S10 mod pressed" }) end,
+       "S10 mod => notify"),
 
-    awful.key({}, "XF86Tools11", function()
-        myFuncs.showCheatsheet() -- e.g. a function that notifies your custom hotkeys
-    end, {description = "Show cheatsheet", group = "scimitar"}),
+    -- Key F11
+    sk({modkey, ctrl}, "F11",
+       function() myFuncs.toggleScratchpad() end,
+       "S11 tap => toggle scratchpad"),
+    sk({modkey, ctrl, shft}, "F11",
+       function() naughty.notify({ text = "S11 mod pressed" }) end,
+       "S11 mod => notify"),
 
-    awful.key({}, "XF86Tools12", function()
-        awful.spawn("gnome-control-center")
-    end, {description = "Open system settings", group = "scimitar"})
-)
-
--- Modified mode (hold l2 = Control)
-scimitar.globalkeys = gears.table.join(scimitar.globalkeys,
-    awful.key({l2}, "XF86Tools1", function()
-        awful.spawn("alacritty --class dropdown")
-    end, {description = "Dropdown terminal overlay", group = "scimitar"}),
-
-    awful.key({l2}, "XF86Tools2", function()
-        myFuncs.openFileManager()
-    end, {description = "Open file manager overlay", group = "scimitar"})
-
-    -- etc. for Tools3..Tools12
+    -- Key F12
+    sk({modkey, ctrl}, "F12",
+       function() awful.spawn(defaultApps.email) end,
+       "S12 tap => open email client"),
+    sk({modkey, ctrl, shft}, "F12",
+       function() naughty.notify({ text = "S12 mod pressed" }) end,
+       "S12 mod => notify")
 )
 
 return scimitar

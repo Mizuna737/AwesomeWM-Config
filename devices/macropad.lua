@@ -5,71 +5,55 @@
 local gears = require("gears")
 local awful = require("awful")
 local myFuncs = require("functions")
+-- Modifiers:
+local modkey = "Mod4"  -- Super
+local ctrl   = "Control"
+local altkey = "Mod1"
+local shft   = "Shift"
 
 local macropad = {}
 
 macropad.globalkeys = gears.table.join(
-    -- Button 1 short => F21 => Switch to WS1
-    awful.key({}, "F21", function()
-        myFuncs.viewWorkspace(1)
-    end, {description = "Go to workspace 1 (short)", group = "macropad"}),
-
-    -- Button 1 long => F26 => Launch dev environment
-    awful.key({}, "F26", function()
-        awful.spawn("alacritty")    -- Dev terminal
-        myFuncs.moveWindowToWorkspace(1)
-        myFuncs.viewWorkspace(1)
-    end, {description = "Setup dev environment on WS1 (long)", group = "macropad"}),
-
-    -- Button 2 short => F22 => WS2
-    awful.key({}, "F22", function()
-        myFuncs.viewWorkspace(2)
-    end, {description = "Go to workspace 2", group = "macropad"}),
-
-    -- Button 2 long => F27 => Comms environment
-    awful.key({}, "F27", function()
-        awful.spawn("slack")
-        awful.spawn("discord")
-        myFuncs.moveWindowToWorkspace(2)
-        myFuncs.viewWorkspace(2)
-    end, {description = "Setup comms on WS2", group = "macropad"}),
-
-    -- Button 3 short => F23 => WS3
-    awful.key({}, "F23", function()
-        myFuncs.viewWorkspace(3)
-    end, {description = "Go to workspace 3", group = "macropad"}),
-
-    -- Button 3 long => F28 => Research/Browser
-    awful.key({}, "F28", function()
-        myFuncs.openBrowser()
-        myFuncs.moveWindowToWorkspace(3)
-        myFuncs.viewWorkspace(3)
-    end, {description = "Setup browser environment on WS3", group = "macropad"}),
-
-    -- Button 4 short => F24 => WS4
-    awful.key({}, "F24", function()
-        myFuncs.viewWorkspace(4)
-    end, {description = "Go to workspace 4", group = "macropad"}),
-
-    -- Button 4 long => F29 => Leisure
-    awful.key({}, "F29", function()
-        awful.spawn("rss-reader-app")
-        myFuncs.moveWindowToWorkspace(4)
-        myFuncs.viewWorkspace(4)
-    end, {description = "Setup leisure environment on WS4", group = "macropad"}),
-
-    -- Button 5 short => F25 => WS5
-    awful.key({}, "F25", function()
-        myFuncs.viewWorkspace(5)
-    end, {description = "Go to workspace 5", group = "macropad"}),
-
-    -- Button 5 long => F30 => Work environment
-    awful.key({}, "F30", function()
-        awful.spawn("teams")
-        awful.spawn("jira-client-app")
-        myFuncs.moveWindowToWorkspace(5)
-        myFuncs.viewWorkspace(5)
-    end, {description = "Setup day job environment on WS5", group = "macropad"})
+    -- Button 1 short => Meta+Alt+1 => Load Entertainment Config
+    awful.key({modkey, altkey}, "7", function()
+        myFuncs.loadWorkspaceConfiguration("Entertainment")
+    end, {description = "M1 => load Entertainment configuration", group = "macropad"}),
+    -- Button 1 long => Meta+Alt+Control+1 => Save Entertainment Config
+    awful.key({modkey, altkey, ctrl}, "7", function()
+        myFuncs.saveWorkspaceConfiguration("Entertainment")
+    end, {description = "M1 hold => overwrite Entertainment configuration", group = "macropad"}),
+    -- Button 2 short => Meta+Alt+2 => Load Code Config
+    awful.key({modkey, altkey}, "8", function()
+        myFuncs.loadWorkspaceConfiguration("Code")
+    end, {description = "M2 => load Code configuration", group = "macropad"}),
+    -- Button 2 long => Meta+Alt+Control+2 => Save Code Config
+    awful.key({modkey, altkey, ctrl}, "8", function()
+        myFuncs.saveWorkspaceConfiguration("Code")
+    end, {description = "M2 hold => overwrite Code configuration", group = "macropad"}),
+    -- Button 3 short => Meta+Alt+2 => Load Work Config
+    awful.key({modkey, altkey}, "0", function()
+        myFuncs.loadWorkspaceConfiguration("Work")
+    end, {description = "M3 => load Work configuration", group = "macropad"}),
+    -- Button 3 long => Meta+Alt+Control+1 => Save Work Config
+    awful.key({modkey, altkey, ctrl}, "0", function()
+        myFuncs.saveWorkspaceConfiguration("Work")
+    end, {description = "M3 hold => overwrite Work configuration", group = "macropad"}),
+    -- Button 2 short => Meta+Alt+4 => Load Work Config
+    awful.key({modkey, altkey}, "-", function()
+        myFuncs.loadWorkspaceConfiguration("Obsidian")
+    end, {description = "M4 => load Obsidian configuration", group = "macropad"}),
+    -- Button 2 long => Meta+Alt+Control+4 => Save Obsidian Config
+    awful.key({modkey, altkey, ctrl}, "-", function()
+        myFuncs.saveWorkspaceConfiguration("Obsidian")
+    end, {description = "M4 hold => overwrite Obsidian configuration", group = "macropad"}),
+    -- Button 2 short => Meta+Alt+5 => Load Work Config
+    awful.key({modkey, altkey}, "=", function()
+        myFuncs.loadWorkspaceConfiguration("Misc")
+    end, {description = "M5 => load Misc configuration", group = "macropad"}),
+    -- Button 2 long => Meta+Alt+Control+5 => Save Misc Config
+    awful.key({modkey, altkey, ctrl}, "=", function()
+        myFuncs.saveWorkspaceConfiguration("Misc")
+    end, {description = "M5 hold => overwrite Misc configuration", group = "macropad"})
 )
 
 return macropad

@@ -37,9 +37,9 @@ normalKeys.globalkeys = gears.table.join(
     end, {description = "open browser", group = "launcher"}),
     
     -- Lock
-    awful.key({ altkey, "Control" }, "l", function()
-        myFuncs.lockScreen()
-    end, {description = "lock screen", group = "hotkeys"}),
+    awful.key({ altkey, "Control" }, "w", function()
+        myFuncs.loadWorkspaceConfiguration()
+    end, {description = "save current workspace", group = "hotkeys"}),
 
     -- Layout switching
     awful.key({ altkey }, "space", function()
