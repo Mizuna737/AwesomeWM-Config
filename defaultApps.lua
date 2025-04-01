@@ -4,14 +4,15 @@
 --------------------------------
 
 local defaultApps = {
-    terminalCommand = "alacritty -e tmux",
-    terminal = "alacritty",
-    browserCommand = "zen-browser",
-    browser = "zen",
-    zen = "zen-browser",
-    editor = "vscodium",
-    fileManagerCommand = "QT_QPA_PLATFORMTHEME=qt5ct QT_STYLE_OVERRIDE=kvantum dolphin",
-    fileManager = "dolphin"
+	terminalCommand = "alacritty",
+	terminal = "alacritty",
+	browserCommand = "zen-browser",
+	browser = "zen",
+	zen = "zen-browser",
+	editor = "kitty",
+	editorCommand = "kitty nvim",
+	fileManagerCommand = "QT_QPA_PLATFORMTHEME=qt5ct QT_STYLE_OVERRIDE=kvantum dolphin",
+	fileManager = "dolphin",
 }
 
 return defaultApps
