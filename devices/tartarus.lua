@@ -153,10 +153,10 @@ tartarus.globalkeys = gears.table.join(
 
 	-- Key tab
 	tk({ modkey, ctrl }, "Tab", function()
-		stack.cycleStack()
-	end, "Tab tap => cycleStack"),
+		myFuncs.addToInbox()
+	end, "Tab tap => add to inbox"),
 	tk({ modkey, ctrl, altkey }, "Tab", function()
-		myFuncs.focusRight()
+		myFuncs.addToInbox()
 	end, "Tab hold => focusRight"), -- example
 	tk({ modkey, ctrl, shft }, "Tab", function()
 		stack.clearStacks()
@@ -359,8 +359,8 @@ tartarus.globalkeys = gears.table.join(
 
 	-- Key space
 	tk({ modkey, ctrl }, "space", function()
-		myFuncs.saveWorkspaceConfiguration()
-	end, "R hold => show cheatsheet"),
+		myFuncs.addInboxTodo()
+	end, "Tab tap => add to inbox"),
 	tk({ modkey, ctrl, altkey }, "space", function()
 		local function loadCodeWorkspace()
 			myFuncs.loadWorkspaceConfiguration()

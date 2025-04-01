@@ -11,6 +11,7 @@ local defaultApps = {
 	zen = "zen-browser",
 	editor = "kitty",
 	editorCommand = "kitty nvim",
+	kitty = "kitty nvim",
 	fileManagerCommand = "QT_QPA_PLATFORMTHEME=qt5ct QT_STYLE_OVERRIDE=kvantum dolphin",
 	fileManager = "dolphin",
 }

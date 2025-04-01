@@ -7,6 +7,7 @@ local naughty = require("naughty")
 local lain = require("lain")
 local bar = require("bar")
 local hotkeys_popup = require("awful.hotkeys_popup")
+local wibox = require("wibox")
 require("awful.hotkeys_popup.keys")
 local defaultApps = require("defaultApps")
 
@@ -198,6 +199,10 @@ function M.promoteFocusedWindow(c)
 		c.wasPromoted = true -- Mark this as a “promoted” window
 		gears.timer.delayed_call(M.centerMouseOnFocusedClient)
 	end
+end
+
+function M.modifyMasterWidth(delta)
+	awful.tag.incmwfact(delta)
 end
 
 --------------------------------
@@ -512,8 +517,9 @@ function M.openEditor()
 	awful.spawn("vscodium")
 end
 
-function M.openRofi()
-	awful.spawn('rofi -show combi -combi-modes "window,drun"')
+function M.openRofi(mode)
+	local mode = mode or '-show combi combi-modes "window, drun, run, ssh"'
+	awful.spawn("rofi " .. mode)
 	M.centerMouseOnNewWindow()
 end
 
@@ -577,6 +583,42 @@ function M.findExisting(app, appCmd)
 	end
 end
 
+local dropdown_class = "Dropdown"
+
+function M.toggle_dropdown_terminal()
+	local dropdown
+	for _, c in ipairs(client.get()) do
+		if c.class == dropdown_class then
+			dropdown = c
+			break
+		end
+	end
+
+	if not dropdown then
+		awful.spawn("alacritty --class 'Dropdown'", {
+			floating = true,
+			tag = awful.screen.focused().selected_tag,
+		})
+		return
+	end
+
+	local current_tag = awful.screen.focused().selected_tag
+
+	if dropdown.hidden == true then
+		dropdown.hidden = false
+		dropdown.minimized = false
+		dropdown:move_to_tag(current_tag)
+		client.focus = dropdown
+		dropdown:raise()
+	elseif dropdown.first_tag == current_tag then
+		dropdown.hidden = true
+	else
+		dropdown:move_to_tag(current_tag)
+		client.focus = dropdown
+		dropdown:raise()
+	end
+end
+
 --------------------------------
 -- Misc
 --------------------------------
@@ -597,5 +639,119 @@ function M.screenshot(full)
 	end
 end
 
--- Done.
+-- Change to the path of your Obsidian planner file
+local obsidianInboxFile = "/home/max/CaptionCall CS/Notes/Personal/e-matrix.md"
+
+-- Inserts a new item into the Inbox section
+function M.insertItemIntoInbox(item)
+	-- Read file
+	local f = io.open(obsidianInboxFile, "r")
+	if not f then
+		naughty.notify({ title = "Error", text = "Could not open " .. obsidianInboxFile })
+		return
+	end
+
+	local lines = {}
+	for line in f:lines() do
+		table.insert(lines, line)
+	end
+	f:close()
+
+	-- Find "## Inbox" and the boundary for its section
+	local startIndex, endIndex = nil, nil
+	for i, line in ipairs(lines) do
+		if line:match("^## Inbox$") then
+			startIndex = i
+			break
+		end
+	end
+
+	if not startIndex then
+		naughty.notify({ title = "Error", text = "'## Inbox' section not found in file." })
+		return
+	end
+
+	for j = startIndex + 1, #lines do
+		if lines[j]:match("^## ") then
+			endIndex = j
+			break
+		end
+	end
+
+	if not endIndex then
+		endIndex = #lines + 1
+	end
+
+	-- Insert new to-do
+	table.insert(lines, endIndex, "- [ ] " .. item)
+
+	-- Write back
+	f = io.open(obsidianInboxFile, "w")
+	if not f then
+		naughty.notify({ title = "Error", text = "Unable to write back to " .. obsidianInboxFile })
+		return
+	end
+
+	for _, line in ipairs(lines) do
+		f:write(line .. "\n")
+	end
+	f:close()
+
+	naughty.notify({ title = "Inbox Updated", text = "Added: " .. item })
+end
+
+-- Prompts the user for a to-do item in a centered floating window
+function M.addInboxTodo()
+	local focusedScreen = awful.screen.focused()
+
+	-- Create a centered wibox
+	local promptWibox = wibox({
+		screen = focusedScreen,
+		width = 400,
+		height = 80,
+		ontop = true,
+		type = "dialog",
+		visible = false,
+		shape = gears.shape.rounded_rect,
+		bg = "#1F2430", -- Adjust as needed
+	})
+
+	awful.placement.centered(promptWibox, { parent = focusedScreen })
+
+	local promptWidget = awful.widget.prompt()
+	promptWidget.font = "Terminus 24"
+	-- Layout of the wibox
+	promptWibox:setup({
+		{
+			{
+				promptWidget,
+				widget = wibox.container.margin,
+				margins = 10,
+			},
+			layout = wibox.layout.flex.horizontal,
+		},
+		layout = wibox.layout.flex.vertical,
+	})
+	promptWidget.font = "Terminus 24"
+	promptWibox.visible = true
+
+	-- The actual prompt
+	awful.prompt.run({
+		prompt = "Add to Inbox: ",
+		textbox = promptWidget.widget,
+		exe_callback = function(input)
+			promptWibox.visible = false
+
+			if not input or #input == 0 then
+				naughty.notify({ title = "Inbox", text = "No TODO entered." })
+				return
+			end
+
+			M.insertItemIntoInbox(input)
+		end,
+		done_callback = function()
+			promptWibox.visible = false
+		end,
+	})
+end -- Done.
 return M
